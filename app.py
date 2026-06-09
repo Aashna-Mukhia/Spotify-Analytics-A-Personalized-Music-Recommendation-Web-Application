@@ -91,9 +91,12 @@ def dashboard():
 
     try:
         profile = fetch_profile(access_token)
-        top_tracks = fetch_top_tracks(access_token, limit=10, time_range=config.SPOTIFY_DEFAULT_TIME_RANGE)
-        top_artists = fetch_top_artists(access_token, limit=10, time_range=config.SPOTIFY_DEFAULT_TIME_RANGE)
-        audio_features = fetch_audio_features(access_token, [track.get("id") for track in top_tracks[:5]])
+        top_tracks = fetch_top_tracks(
+            access_token, limit=10, time_range=config.SPOTIFY_DEFAULT_TIME_RANGE)
+        top_artists = fetch_top_artists(
+            access_token, limit=10, time_range=config.SPOTIFY_DEFAULT_TIME_RANGE)
+        audio_features = fetch_audio_features(
+            access_token, [track.get("id") for track in top_tracks[:5]])
         recently_played = fetch_recently_played(access_token, limit=10)
         currently_playing = fetch_currently_playing(access_token)
     except SpotifyAPIError as exc:
@@ -103,7 +106,8 @@ def dashboard():
     audio_summary = summarize_audio_features(audio_features)
     genre_counts = build_genre_counts(top_artists)
     insights = build_listening_insights(audio_summary, top_artists, top_tracks)
-    recommendations = generate_recommendations(access_token, top_tracks, top_artists, audio_summary)
+    recommendations = generate_recommendations(
+        access_token, top_tracks, top_artists, audio_summary)
     mood = mood_label(audio_summary)
 
     labels, values = as_chart_labels_and_values(audio_summary)
