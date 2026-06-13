@@ -318,5 +318,52 @@ canvas{
 .shell{
   padding:20px;
 }
+.cover,
+.mock-track img{
+    width:60px;
+    height:60px;
+    border-radius:14px;
+    object-fit:cover;
+}
+}
+.profile-stat{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 0;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
 
+.profile-stat:last-child{
+    border-bottom:none;
+}
+
+.profile-stat span{
+    color:#b3b3b3;
+}
+
+.rec-card{
+    transition:.3s ease;
+}
+
+.rec-card:hover{
+    transform:translateY(-4px);
+}
+
+.list-item{
+    transition:.25s ease;
+}
+
+.list-item:hover{
+    background:#282828;
+}
+
+.card h2{
+    font-size:1.2rem;
+    margin-bottom:20px;
+}
+
+.topbar h1{
+    font-weight:800;
+    letter-spacing:-1px;
 }

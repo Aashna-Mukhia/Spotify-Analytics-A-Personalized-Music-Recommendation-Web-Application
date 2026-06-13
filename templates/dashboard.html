@@ -1,22 +1,228 @@
+{% extends "base.html" %}
+{% block content %}
+
 <section class="topbar">
 
-    <div>
+  <div>
+    <span class="pill">Spotify Connected</span>
 
-        <span class="pill">Spotify Connected</span>
+    <h1>
+      Good Evening,
+      {{ profile.display_name or 'Listener' }}
+    </h1>
 
-        <h1>
-            Good Evening,
-            {{ profile.display_name or 'Listener' }}
-        </h1>
+    <p class="subtitle">
+      Based on your recent listening activity.
+    </p>
+  </div>
 
-        <p class="subtitle">
-            Based on your recent listening activity.
-        </p>
+  <a class="btn ghost" href="{{ url_for('logout') }}">
+    Log Out
+  </a>
+
+</section>
+
+<section class="grid two">
+
+  <article class="card profile">
+    <h2>Your Profile</h2>
+
+    <div class="profile-stat">
+      <span>Email</span>
+      <strong>{{ profile.email or 'Hidden by Spotify' }}</strong>
+    </div>
+
+    <div class="profile-stat">
+      <span>Country</span>
+      <strong>{{ profile.country or 'Unknown' }}</strong>
+    </div>
+
+    <div class="profile-stat">
+      <span>Followers</span>
+      <strong>{{ profile.followers.total if profile.followers else 0 }}</strong>
+    </div>
+
+    <div class="profile-stat">
+      <span>Listening Mood</span>
+      <strong>{{ mood }}</strong>
+    </div>
+
+  </article>
+
+  <article class="card insights">
+
+    <h2>Listening Insights</h2>
+
+    {% for insight in insights %}
+      <div class="insight-item">
+        {{ insight }}
+      </div>
+    {% endfor %}
+
+  </article>
+
+</section>
+
+<section class="grid two">
+
+  <article class="card">
+    <h2>Taste Profile</h2>
+    <canvas id="featuresChart" height="180"></canvas>
+  </article>
+
+  <article class="card">
+    <h2>Genre Overview</h2>
+    <canvas id="genreChart" height="180"></canvas>
+  </article>
+
+</section>
+
+<section class="grid two">
+
+  <article class="card">
+
+    <h2>Top Tracks</h2>
+
+    <div class="list">
+
+      {% for track in top_tracks %}
+
+      <div class="list-item">
+
+        <div>
+          <strong>{{ track.name }}</strong>
+
+          <div class="muted">
+            {{ track.artists | map(attribute='name') | join(', ') }}
+          </div>
+        </div>
+
+        <a class="mini-link"
+           href="{{ track.external_urls.spotify }}"
+           target="_blank">
+           Open
+        </a>
+
+      </div>
+
+      {% endfor %}
 
     </div>
 
-    <a class="btn ghost" href="{{ url_for('logout') }}">
-        Logout
-    </a>
+  </article>
+
+  <article class="card">
+
+    <h2>Top Artists</h2>
+
+    <div class="list">
+
+      {% for artist in top_artists %}
+
+      <div class="list-item">
+
+        <div>
+          <strong>{{ artist.name }}</strong>
+
+          <div class="muted">
+            {{ artist.genres[:2] | join(', ') if artist.genres else 'No genre data' }}
+          </div>
+        </div>
+
+        <a class="mini-link"
+           href="{{ artist.external_urls.spotify }}"
+           target="_blank">
+           Open
+        </a>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+  </article>
 
 </section>
+
+<section class="grid two">
+
+  <article class="card">
+
+    <h2>Recently Played</h2>
+
+    <div class="list">
+
+      {% for item in recently_played %}
+
+      {% set track = item.track %}
+
+      <div class="list-item">
+
+        <div>
+
+          <strong>{{ track.name }}</strong>
+
+          <div class="muted">
+            {{ track.artists | map(attribute='name') | join(', ') }}
+          </div>
+
+        </div>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+  </article>
+
+  <article class="card">
+
+    <h2>Recommended For You</h2>
+
+    <div class="recommendations">
+
+      {% for rec in recommendations %}
+
+      <div class="rec-card">
+
+        {% if rec.image %}
+          <img src="{{ rec.image }}" alt="{{ rec.name }}">
+        {% endif %}
+
+        <div class="rec-meta">
+
+          <strong>{{ rec.name }}</strong>
+
+          <div class="muted">
+            {{ rec.artists }}
+          </div>
+
+          <div class="muted">
+            {{ rec.album }}
+          </div>
+
+          <a class="mini-link"
+             href="{{ rec.url }}"
+             target="_blank">
+             Listen on Spotify
+          </a>
+
+        </div>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+  </article>
+
+</section>
+
+<script id="chart-data" type="application/json">
+{{ chart_data | safe }}
+</script>
+
+{% endblock %}
