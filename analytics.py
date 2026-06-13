@@ -4,6 +4,8 @@ from collections import Counter
 from statistics import mean
 from typing import Dict, List, Tuple
 
+import pandas as pd
+import matplotlib.pyplot as plt
 
 FEATURE_KEYS = ["danceability", "energy", "valence", "acousticness", "instrumentalness", "speechiness", "liveness"]
 
@@ -74,3 +76,275 @@ def as_chart_labels_and_values(feature_summary: Dict[str, float]) -> Tuple[List[
     labels = [k.replace("_", " ").title() for k in FEATURE_KEYS]
     values = [round(float(feature_summary.get(k, 0.0)), 3) for k in FEATURE_KEYS]
     return labels, values
+
+
+def load_dataset():
+
+    df = pd.read_csv("dataset.csv")
+
+    return df
+
+
+
+def dataset_summary():
+
+    df = load_dataset()
+
+    total_tracks = len(df)
+
+    total_artists = df["artists"].nunique()
+
+    total_genres = df["track_genre"].nunique()
+
+    avg_popularity = round(df["popularity"].mean(),2)
+
+    return {
+
+        "total_tracks": total_tracks,
+
+        "total_artists": total_artists,
+
+        "total_genres": total_genres,
+
+        "average_popularity": avg_popularity
+
+    }
+
+
+
+def top_genres():
+
+    df = load_dataset()
+
+    genres = df["track_genre"].value_counts().head(10)
+
+    return genres.to_dict()
+
+
+
+def top_danceable_songs():
+
+    df = load_dataset()
+
+    songs = (
+
+        df[["track_name","artists","danceability"]]
+
+        .sort_values(
+
+            by="danceability",
+
+            ascending=False
+
+        )
+
+        .head(10)
+
+    )
+
+    return songs.to_dict(orient="records")
+
+import pandas as pd
+
+def load_dataset():
+    df = pd.read_csv("dataset.csv")
+    return df
+
+def dataset_summary():
+    df = load_dataset()
+
+    total_tracks = len(df)
+    total_artists = df["artists"].nunique()
+    total_genres = df["track_genre"].nunique()
+
+    print("Total Tracks:", total_tracks)
+    print("Total Artists:", total_artists)
+    print("Total Genres:", total_genres)
+
+    print("\nTop 10 Genres:")
+    print(df["track_genre"].value_counts().head(10))
+
+    print("\nTop 10 Popular Songs:")
+    print(
+        df[["track_name", "artists", "popularity"]]
+        .sort_values(by="popularity", ascending=False)
+        .head(10)
+    )
+
+if __name__ == "__main__":
+    dataset_summary()
+    
+def genre_chart():
+
+    df = load_dataset()
+
+    avg_popularity = (
+        df.groupby("track_genre")["popularity"]
+        .mean()
+        .sort_values(ascending=False)
+        .head(10)
+    )
+
+    plt.figure(figsize=(14, 7))
+
+    colors = [
+        "#1DB954",
+        "#1ED760",
+        "#1AA34A",
+        "#17C653",
+        "#39D98A",
+        "#7CE7AC",
+        "#00C896",
+        "#00B96B",
+        "#16A34A",
+        "#22C55E"
+    ]
+
+    bars = plt.bar(
+        avg_popularity.index,
+        avg_popularity.values,
+        color=colors,
+        edgecolor="white",
+        linewidth=1.5
+    )
+
+    plt.title(
+        "🎵 Top 10 Genres by Average Popularity",
+        fontsize=18,
+        fontweight="bold"
+    )
+
+    plt.xlabel(
+        "Genre",
+        fontsize=12
+    )
+
+    plt.ylabel(
+        "Average Popularity",
+        fontsize=12
+    )
+
+    plt.xticks(
+        rotation=35,
+        fontsize=11
+    )
+
+    plt.yticks(fontsize=11)
+
+    plt.grid(
+        axis='y',
+        linestyle='--',
+        alpha=0.3
+    )
+
+    for bar in bars:
+
+        height = bar.get_height()
+
+        plt.text(
+            bar.get_x() + bar.get_width()/2,
+            height + 0.3,
+            f"{height:.1f}",
+            ha='center',
+            fontsize=10
+        )
+
+    plt.xticks(rotation=35, ha='right')
+
+    plt.tight_layout()
+
+    plt.show()
+
+def popularity_histogram():
+
+    df = load_dataset()
+
+    plt.figure(figsize=(11,6))
+
+    plt.hist(
+        df["popularity"],
+        bins=20,
+        color="#1DB954",
+        edgecolor="black",
+        alpha=0.85
+    )
+
+    plt.title(
+        "🎵 Distribution of Spotify Song Popularity",
+        fontsize=22,
+        fontweight="bold"
+    )
+
+    plt.xlabel(
+        "Popularity Score",
+        fontsize=14
+    )
+
+    plt.ylabel(
+        "Number of Songs",
+        fontsize=14
+    )
+
+    plt.grid(
+        linestyle="--",
+        alpha=0.3
+    )
+
+    plt.tight_layout()
+
+    plt.show()
+
+def pie_chart():
+
+    df = load_dataset()
+
+    top_genres = (
+        df.groupby("track_genre")["popularity"]
+        .mean()
+        .sort_values(ascending=False)
+        .head(5)
+    )
+
+    labels = top_genres.index
+    sizes = top_genres.values
+
+    colors = [
+        "#1DB954",
+        "#1ED760",
+        "#17A74A",
+        "#66D98F",
+        "#A8F0C6"
+    ]
+
+    plt.figure(figsize=(8,8))
+
+    plt.pie(
+        sizes,
+        labels=labels,
+        autopct='%1.1f%%',
+        startangle=140,
+        colors=colors,
+        shadow=True,
+        explode=(0.05,0.05,0.05,0.05,0.05),
+        wedgeprops={"edgecolor":"white","linewidth":2}
+    )
+
+    plt.title(
+        "Top 5 Genres by Average Popularity",
+        fontsize=18,
+        fontweight="bold"
+    )
+
+    plt.tight_layout()
+
+    plt.show()
+
+if __name__ == "__main__":
+
+    dataset_summary()
+
+    genre_chart()
+
+    popularity_histogram()
+
+    pie_chart()
