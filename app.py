@@ -44,28 +44,7 @@ def index():
     return render_template("login.html")
 
 
-@app.route("/login")
-def login():
-    if not config.SPOTIFY_CLIENT_ID or not config.SPOTIFY_CLIENT_SECRET:
-        flash("Add your Spotify client ID and secret to the .env file first.", "error")
-        return redirect(url_for("index"))
 
-    state = secrets.token_urlsafe(16)
-    session["oauth_state"] = state
-    return redirect(build_authorize_url(state))
-
-
-@app.route("/callback")
-def callback():
-    error = request.args.get("error")
-    if error:
-        flash(f"Spotify login stopped with: {error}", "error")
-        return redirect(url_for("index"))
-
-    state = request.args.get("state")
-    if not state or state != session.get("oauth_state"):
-        flash("Login state did not match. Please try again.", "error")
-        return redirect(url_for("index"))
 
     code = request.args.get("code")
     if not code:
