@@ -56,7 +56,6 @@ def login():
     session["oauth_state"] = state
     return redirect(build_authorize_url(state))
 
-
 @app.route("/callback")
 def callback():
 
@@ -107,7 +106,6 @@ def callback():
 
     return redirect(url_for("dashboard"))
 
-
 @app.route("/dashboard")
 @login_required
 def dashboard():
@@ -146,7 +144,7 @@ def dashboard():
 
     except Exception as e:
 
-        print("FAILED HERE:")
+        print("FAILED HERE:")   
         print(e)
 
         raise
@@ -190,7 +188,6 @@ def dashboard():
         mood=mood,
         chart_data=json.dumps(chart_data),
     )
-
 
 @app.route("/logout")
 def logout():

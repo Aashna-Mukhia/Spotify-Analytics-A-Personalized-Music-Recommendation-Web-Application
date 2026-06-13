@@ -64,7 +64,6 @@ def derive_target_features(audio_summary: Dict[str, float]) -> Dict[str, float]:
         "energy": clamp(audio_summary.get("energy", 0.5)),
         "valence": clamp(audio_summary.get("valence", 0.5)),
         "acousticness": clamp(audio_summary.get("acousticness", 0.2)),
-        "instrumentalness": clamp(audio_summary.get("instrumentalness", 0.05)),
         "speechiness": clamp(audio_summary.get("speechiness", 0.05)),
         "liveness": clamp(audio_summary.get("liveness", 0.2)),
     }

@@ -113,3 +113,10 @@ def fetch_recommendations(
 
     data = _spotify_get("/recommendations", access_token, params)
     return data.get("tracks", [])
+
+def fetch_artist(access_token: str, artist_id: str) -> Dict[str, Any]:
+    return _spotify_get(f"/artists/{artist_id}", access_token)
+
+
+def fetch_track(access_token: str, track_id: str) -> Dict[str, Any]:
+    return _spotify_get(f"/tracks/{track_id}", access_token)
