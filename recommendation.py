@@ -32,13 +32,20 @@ def build_recommendation_cards(recommended_tracks: List[Dict]) -> List[Dict]:
 def generate_recommendations(access_token: str, top_tracks: List[Dict], top_artists: List[Dict], audio_summary: Dict[str, float]) -> List[Dict]:
     seed_tracks, seed_artists = choose_seeds(top_tracks, top_artists)
     target_features = derive_target_features(audio_summary)
-    raw = fetch_recommendations(
-        access_token=access_token,
-        seed_tracks=seed_tracks,
-        seed_artists=seed_artists,
-        target_features=target_features,
-        limit=8,
-    )
+    try:
+        raw = fetch_recommendations(
+            access_token=access_token,
+            seed_tracks=seed_tracks,
+            seed_artists=seed_artists,
+            target_features=target_features,
+            limit=8,
+        )
+    except Exception as e:
+        print("Recommendations unavailable:", e)
+        raw = []
+    if not raw:
+        return []
+    
     return build_recommendation_cards(raw)
 
 

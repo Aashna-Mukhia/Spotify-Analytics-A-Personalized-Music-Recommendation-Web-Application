@@ -1,21 +1,63 @@
 {% extends "base.html" %}
+
 {% block content %}
+
 <section class="hero">
-  <div class="hero-copy">
-    <span class="pill">PRG 200 • Week 6 Final Build</span>
-    <h1>Spotify Analytics</h1>
-    <p class="lead">A personalized music dashboard that reads real Spotify data, shows taste patterns, and recommends songs based on your listening history.</p>
-    <a class="btn primary" href="{{ url_for('login') }}">Connect with Spotify</a>
-    <p class="hint">Uses Spotify OAuth 2.0, top tracks and artists, live profile data, charts, and recommendations.</p>
-  </div>
-  <div class="hero-card">
-    <h2>What the app shows</h2>
-    <ul>
-      <li>Top tracks and artists</li>
-      <li>Taste profile charts</li>
-      <li>Listening insights</li>
-      <li>Personalized recommendations</li>
-    </ul>
-  </div>
+
+    <div class="hero-copy">
+
+        <span class="pill">Spotify Analytics</span>
+
+        <h1>Understand Your Music</h1>
+
+        <p class="lead">
+            Explore your listening habits, discover patterns in your taste,
+            and receive personalized recommendations powered by Spotify.
+        </p>
+
+        <a class="btn spotify-btn" href="{{ url_for('login') }}">
+            Connect with Spotify
+        </a>
+
+        <div class="feature-tags">
+            <span>Analytics</span>
+            <span>Recommendations</span>
+            <span>Insights</span>
+            <span>Spotify API</span>
+        </div>
+
+    </div>
+
+    <div class="hero-preview">
+
+        <div class="preview-card">
+
+            <h3>Your Dashboard Includes</h3>
+
+            <div class="stat-row">
+                <span>Top Artists</span>
+                <strong>Live Spotify Data</strong>
+            </div>
+
+            <div class="stat-row">
+                <span>Top Tracks</span>
+                <strong>Listening History</strong>
+            </div>
+
+            <div class="stat-row">
+                <span>Recommendations</span>
+                <strong>Personalized Results</strong>
+            </div>
+
+            <div class="stat-row">
+                <span>Insights</span>
+                <strong>Taste Analysis</strong>
+            </div>
+
+        </div>
+
+    </div>
+
 </section>
+
 {% endblock %}
