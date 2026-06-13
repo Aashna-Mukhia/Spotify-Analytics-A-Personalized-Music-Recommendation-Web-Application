@@ -4,48 +4,67 @@
 
 <section class="hero">
 
-  <div class="hero-copy">
+    <div class="hero-copy">
 
-    <span class="pill">PRG 200 • Week 6 Final Build</span>
+        <span class="pill">Spotify Analytics</span>
 
-    <h1>Spotify Analytics Dashboard 🎵</h1>
+        <h1>
+            Understand Your Music
+        </h1>
 
-    <p class="lead">
-      Discover your music personality through Spotify analytics,
-      listening insights, genre preferences and personalized
-      recommendations.
-    </p>
+        <p class="lead">
+            Explore your listening habits, discover patterns in your taste,
+            and receive personalized recommendations powered by Spotify.
+        </p>
 
-    <a class="btn primary" href="{{ url_for('login') }}">
-      Connect with Spotify
-    </a>
+        <a class="btn spotify-btn" href="{{ url_for('login') }}">
+            Connect with Spotify
+        </a>
 
-    <div class="feature-tags">
-      <span>🎧 Analytics</span>
-      <span>📊 Charts</span>
-      <span>🤖 Recommendations</span>
-      <span>🎵 Spotify API</span>
+        <div class="feature-tags">
+            <span>Analytics</span>
+            <span>Recommendations</span>
+            <span>Insights</span>
+            <span>Spotify API</span>
+        </div>
+
     </div>
 
-    <p class="hint">
-      Uses Spotify OAuth 2.0, top tracks and artists,
-      live profile data, charts and recommendations.
-    </p>
+    <div class="hero-preview">
 
-  </div>
+        <div class="preview-card">
+            <div class="preview-header">
+                <span class="green-dot"></span>
+                <span>Listening Overview</span>
+            </div>
 
-  <div class="hero-card">
+            <div class="mock-track">
+                <div class="cover"></div>
+                <div>
+                    <strong>Top Artist</strong>
+                    <p>The Weeknd</p>
+                </div>
+            </div>
 
-    <h2>What the app shows</h2>
+            <div class="mock-track">
+                <div class="cover"></div>
+                <div>
+                    <strong>Top Genre</strong>
+                    <p>Pop • R&B</p>
+                </div>
+            </div>
 
-    <ul>
-      <li>Top tracks and artists</li>
-      <li>Taste profile charts</li>
-      <li>Listening insights</li>
-      <li>Personalized recommendations</li>
-    </ul>
+            <div class="mock-track">
+                <div class="cover"></div>
+                <div>
+                    <strong>Recommendations</strong>
+                    <p>Generated for You</p>
+                </div>
+            </div>
 
-  </div>
+        </div>
+
+    </div>
 
 </section>
 
