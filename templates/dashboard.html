@@ -222,8 +222,6 @@
 
                 <p>{{ rec.track_genre }}</p>
 
-                <p>Popularity: {{ rec.popularity }}</p>
-
             </div>
 
             {% endfor %}
@@ -231,6 +229,52 @@
         </div>
 
     </article>
+
+</section>
+
+<section class="card">
+
+  <h2>Machine Learning Model Comparison</h2>
+
+  <table class="comparison-table">
+
+      <tr>
+          <th>Criteria</th>
+          <th>Random Forest</th>
+          <th>KNN</th>
+      </tr>
+
+      <tr>
+          <td>Algorithm Type</td>
+          <td>Supervised Learning</td>
+          <td>Instance-Based Learning</td>
+      </tr>
+
+      <tr>
+          <td>Goal</td>
+          <td>Predict user preference</td>
+          <td>Find similar songs</td>
+      </tr>
+
+      <tr>
+          <td>Audio Features</td>
+          <td>✓</td>
+          <td>✓</td>
+      </tr>
+
+      <tr>
+          <td>Popularity Feature</td>
+          <td>✓</td>
+          <td>✗</td>
+      </tr>
+
+      <tr>
+          <td>Recommendation Type</td>
+          <td>Personalized</td>
+          <td>Similarity Based</td>
+      </tr>
+
+  </table>
 
 </section>
 

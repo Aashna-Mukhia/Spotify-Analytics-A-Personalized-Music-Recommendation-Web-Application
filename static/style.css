@@ -368,3 +368,18 @@ canvas{
     letter-spacing:-1px;
 }
 
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.comparison-table th {
+  font-weight: bold;
+}
