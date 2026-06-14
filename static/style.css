@@ -130,36 +130,35 @@ body::before{
   letter-spacing:.08em;
   text-transform:uppercase;
   color:#555;
-  margin-bottom:18px;
+  margin-bottom:16px;
 }
 
-.feature-list{
-  list-style:none;
-  margin:0;
-  padding:0;
+.feature-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
 
-.feature-list li{
+.feature-block{
   display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:14px 0;
-  border-bottom:1px solid #222;
+  flex-direction:column;
+  gap:5px;
+  background:#1e1e1e;
+  border:1px solid #272727;
+  border-radius:12px;
+  padding:16px 14px;
 }
 
-.feature-list li:last-child{
-  border-bottom:none;
+.feature-block-name{
+  font-size:.88rem;
+  font-weight:600;
+  color:#e8e8e8;
 }
 
-.feature-name{
-  font-size:.93rem;
-  font-weight:500;
-  color:#e0e0e0;
-}
-
-.feature-desc{
-  font-size:.82rem;
+.feature-block-desc{
+  font-size:.76rem;
   color:#555;
+  line-height:1.4;
 }
 
 .preview-header{
