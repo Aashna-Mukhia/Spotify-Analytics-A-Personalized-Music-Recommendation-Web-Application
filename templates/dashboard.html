@@ -2,282 +2,265 @@
 {% block content %}
 
 <section class="topbar">
-
-    <div>
-        <span class="pill">Spotify Connected</span>
-
-        <h1>
-            Good Evening,
-            {{ profile.display_name or 'Listener' }}
-        </h1>
-
-        <p class="subtitle">
-            Based on your recent listening activity.
-        </p>
-    </div>
-
-    <a class="btn ghost" href="{{ url_for('logout') }}">
-        Log Out
-    </a>
-
+  <div class="topbar-left">
+    <span class="pill">● Connected</span>
+    <h1>Good Evening, <span class="name-accent">{{ profile.display_name or 'Listener' }}</span></h1>
+    <p class="subtitle">Here's what your music says about you.</p>
+  </div>
+  <a class="btn ghost" href="{{ url_for('logout') }}">Log Out</a>
 </section>
 
+<div class="stat-strip">
+  <div class="stat-chip">
+    <span class="stat-val">{{ top_tracks | length }}</span>
+    <span class="stat-key">Top Tracks</span>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-val">{{ top_artists | length }}</span>
+    <span class="stat-key">Top Artists</span>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-val">{{ recently_played | length }}</span>
+    <span class="stat-key">Recently Played</span>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-val">{{ recommendations | length }}</span>
+    <span class="stat-key">For You</span>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-val">{{ profile.followers.total if profile.followers else 0 }}</span>
+    <span class="stat-key">Followers</span>
+  </div>
+  <div class="stat-chip">
+    <span class="stat-val mood-val">{{ mood }}</span>
+    <span class="stat-key">Mood</span>
+  </div>
+</div>
 
-<section class="grid two">
+<nav class="tab-nav" role="tablist">
+  <button class="tab-btn active" data-tab="overview">Overview</button>
+  <button class="tab-btn" data-tab="tracks">Top Tracks</button>
+  <button class="tab-btn" data-tab="artists">Top Artists</button>
+  <button class="tab-btn" data-tab="recent">Recently Played</button>
+  <button class="tab-btn" data-tab="recs">For You</button>
+</nav>
 
-    <article class="card profile">
+<div class="tab-panel active" id="tab-overview">
 
-        <h2>Your Profile</h2>
+  <div class="grid two">
 
-        <div class="profile-stat">
-            <span>Email</span>
-            <strong>{{ profile.email or 'Hidden by Spotify' }}</strong>
-        </div>
-
-        <div class="profile-stat">
-            <span>Country</span>
-            <strong>{{ profile.country or 'Unknown' }}</strong>
-        </div>
-
-        <div class="profile-stat">
-            <span>Followers</span>
-            <strong>
-                {{ profile.followers.total if profile.followers else 0 }}
-            </strong>
-        </div>
-
-        <div class="profile-stat">
-            <span>Listening Mood</span>
-            <strong>{{ mood }}</strong>
-        </div>
-
+    <article class="card">
+      <h2>Taste Profile</h2>
+      <canvas id="featuresChart" height="210"></canvas>
     </article>
 
+  </div>
 
-    <article class="card insights">
+  <div class="grid two">
 
-        <h2>Listening Insights</h2>
-
+    <article class="card">
+      <h2>Listening Insights</h2>
+      <div class="insight-list">
         {% for insight in insights %}
-            <div class="insight-item">
-                {{ insight }}
-            </div>
+        <div class="insight-row">
+          <span class="insight-dot"></span>
+          <span>{{ insight }}</span>
+        </div>
         {% endfor %}
-
+      </div>
     </article>
-
-</section>
-
-
-<section class="card">
-
-    <h2>Taste Profile</h2>
-
-    <canvas id="featuresChart" height="180"></canvas>
-
-</section>
-
-
-<section class="grid two">
 
     <article class="card">
-
-        <h2>Top Tracks</h2>
-
-        <div class="list">
-
-            {% for track in top_tracks %}
-
-            <div class="list-item">
-
-                <div>
-                    <strong>{{ track.name }}</strong>
-
-                    <div class="muted">
-                        {{ track.artists | map(attribute='name') | join(', ') }}
-                    </div>
-                </div>
-
-                <a
-                    class="mini-link"
-                    href="{{ track.external_urls.spotify }}"
-                    target="_blank"
-                >
-                    Open
-                </a>
-
-            </div>
-
-            {% endfor %}
-
+      <h2>Your Profile</h2>
+      <div class="profile-rows">
+        <div class="profile-row">
+          <span>Email</span>
+          <strong>{{ profile.email or 'Hidden by Spotify' }}</strong>
         </div>
-
+        <div class="profile-row">
+          <span>Country</span>
+          <strong>{{ profile.country or 'Unknown' }}</strong>
+        </div>
+        <div class="profile-row">
+          <span>Followers</span>
+          <strong>{{ profile.followers.total if profile.followers else 0 }}</strong>
+        </div>
+        <div class="profile-row">
+          <span>Listening Mood</span>
+          <strong class="mood-badge">{{ mood }}</strong>
+        </div>
+      </div>
     </article>
 
+  </div>
 
-    <article class="card">
+</div>
 
-        <h2>Top Artists</h2>
-
-        <div class="list">
-
-            {% for artist in top_artists %}
-
-            <div class="list-item">
-
-                <div>
-                    <strong>{{ artist.name }}</strong>
-                </div>
-
-                <a
-                    class="mini-link"
-                    href="{{ artist.external_urls.spotify }}"
-                    target="_blank"
-                >
-                    Open
-                </a>
-
-            </div>
-
-            {% endfor %}
-
+<div class="tab-panel" id="tab-tracks">
+  <article class="card card-full">
+    <h2>Top Tracks</h2>
+    <div class="track-list">
+      {% for track in top_tracks %}
+      <div class="track-row">
+        <span class="track-num">{{ loop.index }}</span>
+        <div class="track-info">
+          <strong>{{ track.name }}</strong>
+          <span class="track-artist">{{ track.artists | map(attribute='name') | join(', ') }}</span>
         </div>
-
-    </article>
-
-</section>
-
-
-<section class="card">
-
-    <h2>Recently Played</h2>
-
-    <div class="list">
-
-        {% for item in recently_played %}
-
-        {% set track = item.track %}
-
-        <div class="list-item">
-
-            <div>
-                <strong>{{ track.name }}</strong>
-
-                <div class="muted">
-                    {{ track.artists | map(attribute='name') | join(', ') }}
-                </div>
-            </div>
-
-        </div>
-
-        {% endfor %}
-
+        <a class="open-btn" href="{{ track.external_urls.spotify }}" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          Open
+        </a>
+      </div>
+      {% endfor %}
     </div>
+  </article>
+</div>
 
-</section>
-
-
-<section class="grid two">
-
-    <article class="card">
-
-        <h2> Random Forest Recommendations</h2>
-
-        <div class="recommendations">
-
-            {% for rec in rf_recommendations %}
-
-            <div class="rec-card">
-
-                <strong>{{ rec.track_name }}</strong>
-
-                <p>{{ rec.artists }}</p>
-
-                <p>{{ rec.track_genre }}</p>
-
-                <p>Popularity: {{ rec.popularity }}</p>
-
-            </div>
-
-            {% endfor %}
-
+<div class="tab-panel" id="tab-artists">
+  <article class="card card-full">
+    <h2>Top Artists</h2>
+    <div class="track-list">
+      {% for artist in top_artists %}
+      <div class="track-row">
+        <span class="track-num">{{ loop.index }}</span>
+        <div class="track-info">
+          <strong>{{ artist.name }}</strong>
+          <span class="track-artist">{{ artist.genres[:2] | join(', ') if artist.genres else 'No genre data' }}</span>
         </div>
+        <a class="open-btn" href="{{ artist.external_urls.spotify }}" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          Open
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </article>
+</div>
 
-    </article>
-
-
-    <article class="card">
-
-        <h2> KNN Recommendations</h2>
-
-        <div class="recommendations">
-
-            {% for rec in knn_recommendations %}
-
-            <div class="rec-card">
-
-                <strong>{{ rec.track_name }}</strong>
-
-                <p>{{ rec.artists }}</p>
-
-                <p>{{ rec.track_genre }}</p>
-
-            </div>
-
-            {% endfor %}
-
+<div class="tab-panel" id="tab-recent">
+  <article class="card card-full">
+    <h2>Recently Played</h2>
+    <div class="track-list">
+      {% for item in recently_played %}
+      {% set track = item.track %}
+      <div class="track-row">
+        <span class="track-num">{{ loop.index }}</span>
+        <div class="track-info">
+          <strong>{{ track.name }}</strong>
+          <span class="track-artist">{{ track.artists | map(attribute='name') | join(', ') }}</span>
         </div>
+      </div>
+      {% endfor %}
+    </div>
+  </article>
+</div>
 
-    </article>
+<div class="tab-panel" id="tab-recs">
+  <article class="card card-full">
+    <h2>Recommended For You</h2>
+    <section class="grid two">
 
-</section>
-
-<section class="card">
-
-  <h2>Machine Learning Model Comparison</h2>
-
-  <table class="comparison-table">
-
-      <tr>
-          <th>Criteria</th>
-          <th>Random Forest</th>
-          <th>KNN</th>
-      </tr>
-
-      <tr>
-          <td>Algorithm Type</td>
-          <td>Supervised Learning</td>
-          <td>Instance-Based Learning</td>
-      </tr>
-
-      <tr>
-          <td>Goal</td>
-          <td>Predict user preference</td>
-          <td>Find similar songs</td>
-      </tr>
-
-      <tr>
-          <td>Audio Features</td>
-          <td>✓</td>
-          <td>✓</td>
-      </tr>
-
-      <tr>
-          <td>Popularity Feature</td>
-          <td>✓</td>
-          <td>✗</td>
-      </tr>
-
-      <tr>
-          <td>Recommendation Type</td>
-          <td>General</td>
-          <td>Similarity Based</td>
-      </tr>
-
-  </table>
-
-</section>
-
+        <article class="card">
+    
+            <h2> Random Forest Recommendations</h2>
+    
+            <div class="recommendations">
+    
+                {% for rec in rf_recommendations %}
+    
+                <div class="rec-card">
+    
+                    <strong>{{ rec.track_name }}</strong>
+    
+                    <p>{{ rec.artists }}</p>
+    
+                    <p>{{ rec.track_genre }}</p>
+    
+                    <p>Popularity: {{ rec.popularity }}</p>
+    
+                </div>
+    
+                {% endfor %}
+    
+            </div>
+    
+        </article>
+    
+    
+        <article class="card">
+    
+            <h2> KNN Recommendations</h2>
+    
+            <div class="recommendations">
+    
+                {% for rec in knn_recommendations %}
+    
+                <div class="rec-card">
+    
+                    <strong>{{ rec.track_name }}</strong>
+    
+                    <p>{{ rec.artists }}</p>
+    
+                    <p>{{ rec.track_genre }}</p>
+    
+                </div>
+    
+                {% endfor %}
+    
+            </div>
+    
+        </article>
+    
+    </section>
+    
+    <section class="card">
+    
+      <h2>Machine Learning Model Comparison</h2>
+    
+      <table class="comparison-table">
+    
+          <tr>
+              <th>Criteria</th>
+              <th>Random Forest</th>
+              <th>KNN</th>
+          </tr>
+    
+          <tr>
+              <td>Algorithm Type</td>
+              <td>Supervised Learning</td>
+              <td>Instance-Based Learning</td>
+          </tr>
+    
+          <tr>
+              <td>Goal</td>
+              <td>Predict user preference</td>
+              <td>Find similar songs</td>
+          </tr>
+    
+          <tr>
+              <td>Audio Features</td>
+              <td>✓</td>
+              <td>✓</td>
+          </tr>
+    
+          <tr>
+              <td>Popularity Feature</td>
+              <td>✓</td>
+              <td>✗</td>
+          </tr>
+    
+          <tr>
+              <td>Recommendation Type</td>
+              <td>Personalized</td>
+              <td>Similarity Based</td>
+          </tr>
+    
+      </table>
+    
+    </section>
+  </article>
+</div>
 
 <script id="chart-data" type="application/json">
 {{ chart_data | safe }}
