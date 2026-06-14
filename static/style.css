@@ -233,7 +233,16 @@ body::before{
   padding:12px 20px;
   border-radius:999px;
   background:#181818;
-  border:1px solid var(--border);
+  border:1px solid #333;
+  color:#aaa;
+  font-size:.85rem;
+  font-weight:500;
+  transition:.2s;
+}
+
+.ghost:hover{
+  border-color:#555;
+  color:#fff;
 }
 
 .grid.two{
