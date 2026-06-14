@@ -406,11 +406,327 @@ canvas{
 }
 
 .card h2{
-    font-size:1.2rem;
+    font-size:1.1rem;
+    font-weight:700;
     margin-bottom:20px;
+    letter-spacing:-.02em;
 }
 
 .topbar h1{
     font-weight:800;
     letter-spacing:-1px;
 }
+
+/* ── Name accent ──────────────────────────────────── */
+.name-accent{
+  color:var(--spotify);
+}
+
+/* ── Stat Strip ───────────────────────────────────── */
+.stat-strip{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:20px 0 30px;
+}
+
+.stat-chip{
+  background:#181818;
+  border:1px solid #282828;
+  border-radius:12px;
+  padding:14px 20px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  min-width:100px;
+  transition:.2s;
+}
+
+.stat-chip:hover{
+  border-color:#1DB954;
+}
+
+.stat-val{
+  font-size:1.4rem;
+  font-weight:800;
+  color:#fff;
+  letter-spacing:-.03em;
+}
+
+.stat-key{
+  font-size:.72rem;
+  color:#666;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-weight:600;
+}
+
+.mood-val{
+  font-size:1rem;
+  letter-spacing:0;
+}
+
+/* ── Tab Nav ──────────────────────────────────────── */
+.tab-nav{
+  display:flex;
+  gap:4px;
+  background:#161616;
+  border:1px solid #242424;
+  border-radius:12px;
+  padding:4px;
+  width:fit-content;
+  margin-bottom:24px;
+}
+
+.tab-btn{
+  background:none;
+  border:none;
+  color:#666;
+  font-family:inherit;
+  font-size:.82rem;
+  font-weight:600;
+  padding:8px 18px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:.2s;
+  white-space:nowrap;
+}
+
+.tab-btn:hover{
+  color:#ccc;
+}
+
+.tab-btn.active{
+  background:#1DB954;
+  color:#000;
+}
+
+/* ── Tab Panels ───────────────────────────────────── */
+.tab-panel{
+  display:none;
+}
+
+.tab-panel.active{
+  display:block;
+}
+
+.card-full{
+  margin-bottom:20px;
+}
+
+/* ── Track / Artist List ──────────────────────────── */
+.track-list{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.track-row{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:12px 14px;
+  border-radius:8px;
+  transition:.2s;
+  cursor:default;
+}
+
+.track-row:hover{
+  background:#1e1e1e;
+}
+
+.track-num{
+  font-size:.8rem;
+  color:#555;
+  width:20px;
+  text-align:right;
+  flex-shrink:0;
+  font-weight:600;
+}
+
+.track-info{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+.track-info strong{
+  font-size:.9rem;
+  font-weight:600;
+  color:#e8e8e8;
+}
+
+.track-artist{
+  font-size:.78rem;
+  color:#666;
+}
+
+.open-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:.75rem;
+  font-weight:600;
+  color:#1DB954;
+  text-decoration:none;
+  background:rgba(29,185,84,.1);
+  border:1px solid rgba(29,185,84,.2);
+  border-radius:20px;
+  padding:5px 12px;
+  flex-shrink:0;
+  transition:.2s;
+}
+
+.open-btn:hover{
+  background:rgba(29,185,84,.2);
+  border-color:rgba(29,185,84,.4);
+}
+
+/* ── Insights ─────────────────────────────────────── */
+.insight-list{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+
+.insight-row{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid #1e1e1e;
+  font-size:.88rem;
+  color:#c0c0c0;
+  line-height:1.5;
+}
+
+.insight-row:last-child{
+  border-bottom:none;
+}
+
+.insight-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#1DB954;
+  flex-shrink:0;
+  margin-top:6px;
+}
+
+/* ── Profile Rows ─────────────────────────────────── */
+.profile-rows{
+  display:flex;
+  flex-direction:column;
+}
+
+.profile-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:13px 0;
+  border-bottom:1px solid #1e1e1e;
+  font-size:.88rem;
+}
+
+.profile-row:last-child{
+  border-bottom:none;
+}
+
+.profile-row span{
+  color:#666;
+}
+
+.profile-row strong{
+  color:#e0e0e0;
+  font-weight:500;
+}
+
+.mood-badge{
+  background:rgba(29,185,84,.12);
+  color:#1DB954 !important;
+  border:1px solid rgba(29,185,84,.2);
+  border-radius:20px;
+  padding:3px 12px;
+  font-size:.8rem;
+}
+
+/* ── Recommendations Grid ─────────────────────────── */
+.rec-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+  gap:16px;
+}
+
+.rec-tile{
+  background:#1a1a1a;
+  border:1px solid #242424;
+  border-radius:12px;
+  overflow:hidden;
+  transition:.2s;
+  display:flex;
+  flex-direction:column;
+}
+
+.rec-tile:hover{
+  border-color:#333;
+  transform:translateY(-3px);
+}
+
+.rec-img{
+  width:100%;
+  aspect-ratio:1;
+  object-fit:cover;
+  display:block;
+}
+
+.rec-img-placeholder{
+  width:100%;
+  aspect-ratio:1;
+  background:linear-gradient(135deg,#2a2a2a,#1a1a1a);
+}
+
+.rec-info{
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  flex:1;
+}
+
+.rec-name{
+  font-size:.88rem;
+  font-weight:600;
+  color:#e8e8e8;
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.rec-artist,.rec-album{
+  font-size:.75rem;
+  color:#666;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.rec-open{
+  margin-top:10px;
+  align-self:flex-start;
+}
+
+/* ── Topbar updated ───────────────────────────────── */
+.topbar-left h1{
+  font-size:2.2rem;
+  margin-top:10px;
+}
+
+@media(max-width:900px){
+  .stat-strip{ gap:8px; }
+  .stat-chip{ min-width:80px; padding:12px 14px; }
+  .tab-nav{ flex-wrap:wrap; width:100%; }
+  .rec-grid{ grid-template-columns:1fr 1fr; }
+  .topbar-left h1{ font-size:1.6rem; }
+}
