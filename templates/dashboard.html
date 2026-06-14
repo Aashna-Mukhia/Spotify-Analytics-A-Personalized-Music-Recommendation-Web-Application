@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- ── Top Bar ──────────────────────────────────────── -->
 <section class="topbar">
   <div class="topbar-left">
     <span class="pill">● Connected</span>
@@ -11,7 +10,6 @@
   <a class="btn ghost" href="{{ url_for('logout') }}">Log Out</a>
 </section>
 
-<!-- ── Stat Strip ───────────────────────────────────── -->
 <div class="stat-strip">
   <div class="stat-chip">
     <span class="stat-val">{{ top_tracks | length }}</span>
@@ -39,7 +37,6 @@
   </div>
 </div>
 
-<!-- ── Tab Nav ──────────────────────────────────────── -->
 <nav class="tab-nav" role="tablist">
   <button class="tab-btn active" data-tab="overview">Overview</button>
   <button class="tab-btn" data-tab="tracks">Top Tracks</button>
@@ -48,7 +45,6 @@
   <button class="tab-btn" data-tab="recs">For You</button>
 </nav>
 
-<!-- ── Overview Tab ─────────────────────────────────── -->
 <div class="tab-panel active" id="tab-overview">
 
   <div class="grid two">
@@ -105,7 +101,6 @@
 
 </div>
 
-<!-- ── Top Tracks Tab ───────────────────────────────── -->
 <div class="tab-panel" id="tab-tracks">
   <article class="card card-full">
     <h2>Top Tracks</h2>
@@ -127,7 +122,6 @@
   </article>
 </div>
 
-<!-- ── Top Artists Tab ──────────────────────────────── -->
 <div class="tab-panel" id="tab-artists">
   <article class="card card-full">
     <h2>Top Artists</h2>
@@ -149,7 +143,6 @@
   </article>
 </div>
 
-<!-- ── Recently Played Tab ──────────────────────────── -->
 <div class="tab-panel" id="tab-recent">
   <article class="card card-full">
     <h2>Recently Played</h2>
@@ -168,7 +161,6 @@
   </article>
 </div>
 
-<!-- ── Recommendations Tab ──────────────────────────── -->
 <div class="tab-panel" id="tab-recs">
   <article class="card card-full">
     <h2>Recommended For You</h2>
