@@ -707,8 +707,8 @@ canvas{
 
 .rec-artist,.rec-album{
   font-size:.75rem;
-  color:#666;
-  white-space:nowrap;
+  color:#999;
+  display:block;
   overflow:hidden;
   text-overflow:ellipsis;
 }
@@ -729,4 +729,4 @@ canvas{
   .tab-nav{ flex-wrap:wrap; width:100%; }
   .rec-grid{ grid-template-columns:1fr 1fr; }
   .topbar-left h1{ font-size:1.6rem; }
-}
+}

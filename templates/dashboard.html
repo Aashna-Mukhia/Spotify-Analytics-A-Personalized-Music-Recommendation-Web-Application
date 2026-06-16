@@ -54,11 +54,6 @@
       <canvas id="featuresChart" height="210"></canvas>
     </article>
 
-    <article class="card">
-      <h2>Genre Breakdown</h2>
-      <canvas id="genreChart" height="210"></canvas>
-    </article>
-
   </div>
 
   <div class="grid two">
@@ -162,29 +157,118 @@
 </div>
 
 <div class="tab-panel" id="tab-recs">
-  <article class="card card-full">
-    <h2>Recommended For You</h2>
-    <div class="rec-grid">
-      {% for rec in recommendations %}
-      <div class="rec-tile">
-        {% if rec.image %}
-          <img src="{{ rec.image }}" alt="{{ rec.name }}" class="rec-img">
+
+  <!-- Side-by-Side Recommendations Section -->
+  <div class="grid two" style="margin-bottom: 30px; gap: 20px;">
+    
+    <!-- KNN Recommendations -->
+    <article class="card card-full">
+      <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+        <span style="color: #1DB954;">◆</span> KNN Recommendations
+      </h2>
+      <div class="rec-grid" style="grid-template-columns: 1fr;">
+        {% if knn_recommendations %}
+          {% for rec in knn_recommendations %}
+          <div class="rec-tile" style="flex-direction: row; gap: 12px;">
+            <div class="rec-img rec-img-placeholder" style="width: 80px; height: 80px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1DB954, #1aa34a); color: #000; font-size: 36px; border-radius: 4px; font-weight: bold;">♪</div>
+            <div class="rec-info" style="gap: 6px;">
+              <strong class="rec-name">{{ rec.track_name }}</strong>
+              <span class="rec-artist">{{ rec.artists }}</span>
+              <span class="rec-album">{{ rec.track_genre }}</span>
+              <a class="open-btn rec-open" href="https://open.spotify.com/search/{{ rec.track_name }}" target="_blank" style="margin-top: auto;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+                Listen
+              </a>
+            </div>
+          </div>
+          {% endfor %}
         {% else %}
-          <div class="rec-img rec-img-placeholder"></div>
+          <p style="color: #b3b3b3; text-align: center; padding: 20px;">No recommendations available</p>
         {% endif %}
-        <div class="rec-info">
-          <strong class="rec-name">{{ rec.name }}</strong>
-          <span class="rec-artist">{{ rec.artists }}</span>
-          <span class="rec-album">{{ rec.album }}</span>
-          <a class="open-btn rec-open" href="{{ rec.url }}" target="_blank">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-            Listen on Spotify
-          </a>
-        </div>
       </div>
-      {% endfor %}
+    </article>
+
+    <!-- Random Forest Recommendations -->
+    <article class="card card-full">
+      <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+        <span style="color: #1DB954;">◆</span> Random Forest Recommendations
+      </h2>
+      <div class="rec-grid" style="grid-template-columns: 1fr;">
+        {% if rf_recommendations %}
+          {% for rec in rf_recommendations %}
+          <div class="rec-tile" style="flex-direction: row; gap: 12px;">
+            <div class="rec-img rec-img-placeholder" style="width: 80px; height: 80px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1DB954, #1aa34a); color: #000; font-size: 36px; border-radius: 4px; font-weight: bold;">♪</div>
+            <div class="rec-info" style="gap: 6px;">
+              <strong class="rec-name">{{ rec.track_name }}</strong>
+              <span class="rec-artist">{{ rec.artists }}</span>
+              <span class="rec-album">{{ rec.track_genre }}</span>
+              <a class="open-btn rec-open" href="https://open.spotify.com/search/{{ rec.track_name }}" target="_blank" style="margin-top: auto;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+                Listen
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p style="color: #b3b3b3; text-align: center; padding: 20px;">No recommendations available</p>
+        {% endif %}
+      </div>
+    </article>
+
+  </div>
+
+  
+
+    
+
+  <!-- Model Comparison Section -->
+  <article class="card card-full">
+    <h2 style="margin-bottom: 20px;">Model Comparison</h2>
+    <div class="comparison-table">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 2px solid #1DB954;">
+            <th style="padding: 14px; text-align: left; font-weight: 600; color: #1DB954;">Aspect</th>
+            <th style="padding: 14px; text-align: left; font-weight: 600; color: #1DB954;">KNN Model</th>
+            <th style="padding: 14px; text-align: left; font-weight: 600; color: #1DB954;">Random Forest Model</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid #282828;">
+            <td style="padding: 14px; font-weight: 500;">Algorithm Type</td>
+            <td style="padding: 14px;">Instance-Based Learning</td>
+            <td style="padding: 14px;">Ensemble Classification</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #282828;">
+            <td style="padding: 14px; font-weight: 500;">Distance Metric</td>
+            <td style="padding: 14px;">Euclidean Distance</td>
+            <td style="padding: 14px;">Feature Importance</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #282828;">
+            <td style="padding: 14px; font-weight: 500;">Training Speed</td>
+            <td style="padding: 14px;">Fast</td>
+            <td style="padding: 14px;">Moderate</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #282828;">
+            <td style="padding: 14px; font-weight: 500;">Prediction Speed</td>
+            <td style="padding: 14px;">Slower</td>
+            <td style="padding: 14px;">Fast</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #282828;">
+            <td style="padding: 14px; font-weight: 500;">Model Interpretability</td>
+            <td style="padding: 14px;">High</td>
+            <td style="padding: 14px;">Medium</td>
+          </tr>
+          <tr>
+            <td style="padding: 14px; font-weight: 500;">Best For</td>
+            <td style="padding: 14px;">Similar Track Discovery</td>
+            <td style="padding: 14px;">Popularity-Based Recommendations</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </article>
+
 </div>
 
 <script id="chart-data" type="application/json">
