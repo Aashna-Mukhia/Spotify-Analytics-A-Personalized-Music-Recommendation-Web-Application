@@ -18,7 +18,10 @@ features = [
 df = df.dropna(subset=features)
 
 scaler = StandardScaler()
-scaled_data = scaler.fit_transform(df[features])
+
+scaled_data = scaler.fit_transform(
+    df[features]
+)
 
 knn = NearestNeighbors(
     n_neighbors=6,
@@ -27,18 +30,21 @@ knn = NearestNeighbors(
 
 knn.fit(scaled_data)
 
-def get_knn_recommendations(song_name=None):
 
-    if song_name is None:
-        song_name = df.iloc[0]["track_name"]
+def get_knn_recommendations(top_tracks):
+
+    if not top_tracks:
+        return []
+
+    spotify_song = top_tracks[0]["name"]
 
     song = df[
         df["track_name"].str.lower()
-        == song_name.lower()
+        == spotify_song.lower()
     ]
 
     if song.empty:
-        song = df.iloc[[0]]
+        return []
 
     song_index = song.index[0]
 
@@ -54,8 +60,7 @@ def get_knn_recommendations(song_name=None):
             "track_name": df.iloc[i]["track_name"],
             "artists": df.iloc[i]["artists"],
             "track_genre": df.iloc[i]["track_genre"],
-            "popularity": df.iloc[i]["popularity"]
+            "popularity": int(df.iloc[i]["popularity"])
         })
 
     return recommendations
-

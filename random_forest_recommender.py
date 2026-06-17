@@ -5,15 +5,23 @@ from sklearn.ensemble import RandomForestClassifier
 DATASET = "spotify_dataset.csv"
 
 
-def train_random_forest():
+def train_random_forest(top_tracks):
 
     df = pd.read_csv(DATASET)
 
     df["liked"] = 0
 
-    top_songs = df.nlargest(1000, "popularity")
+    spotify_track_names = [
+        track["name"].lower()
+        for track in top_tracks
+    ]
 
-    df.loc[top_songs.index, "liked"] = 1
+    df.loc[
+        df["track_name"]
+        .str.lower()
+        .isin(spotify_track_names),
+        "liked"
+    ] = 1
 
     features = [
         "danceability",
@@ -39,9 +47,12 @@ def train_random_forest():
 
     return model, df
 
-def get_rf_recommendations():
 
-    model, df = train_random_forest()
+def get_rf_recommendations(top_tracks):
+
+    model, df = train_random_forest(
+        top_tracks
+    )
 
     features = [
         "danceability",
@@ -56,12 +67,22 @@ def get_rf_recommendations():
 
     scores = model.predict_proba(
         df[features]
-    )[:,1]
+    )[:, 1]
 
     df["score"] = scores
 
+    spotify_track_names = [
+        track["name"].lower()
+        for track in top_tracks
+    ]
+
     recommendations = (
-        df.sort_values(
+        df[
+            ~df["track_name"]
+            .str.lower()
+            .isin(spotify_track_names)
+        ]
+        .sort_values(
             "score",
             ascending=False
         )

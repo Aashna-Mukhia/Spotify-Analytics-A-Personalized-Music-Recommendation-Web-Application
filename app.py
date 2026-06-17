@@ -163,8 +163,13 @@ def dashboard():
         top_tracks
     )
 
-    rf_recommendations = get_rf_recommendations()
-    knn_recommendations = get_knn_recommendations()
+    rf_recommendations = get_rf_recommendations(
+        top_tracks
+    )
+
+    knn_recommendations = get_knn_recommendations(
+        top_tracks
+    )
 
     mood = mood_label(audio_summary)
 
