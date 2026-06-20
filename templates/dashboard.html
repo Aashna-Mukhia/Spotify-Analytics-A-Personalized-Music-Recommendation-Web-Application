@@ -24,7 +24,7 @@
     <span class="stat-key">Recently Played</span>
   </div>
   <div class="stat-chip">
-    <span class="stat-val">{{ recommendations | length }}</span>
+    <span class="stat-val">{{ (knn_recommendations | length) + (rf_recommendations | length) }}</span>
     <span class="stat-key">For You</span>
   </div>
   <div class="stat-chip">
@@ -47,14 +47,10 @@
 
 <div class="tab-panel active" id="tab-overview">
 
-  <div class="grid two">
-
-    <article class="card">
-      <h2>Taste Profile</h2>
-      <canvas id="featuresChart" height="210"></canvas>
-    </article>
-
-  </div>
+  <article class="card card-full" style="margin-bottom: 20px;">
+    <h2>Taste Profile</h2>
+    <canvas id="featuresChart" height="210"></canvas>
+  </article>
 
   <div class="grid two">
 
