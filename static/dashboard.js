@@ -48,7 +48,15 @@ document.addEventListener("DOMContentLoaded", () => {
       options: {
         responsive: true,
         animation: { duration: 800, easing: "easeOutQuart" },
-        plugins: { legend: { display: false } },
+        interaction: { mode: "nearest" },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ${ctx.dataset.label}: ${Math.round(ctx.raw * 100)}%`
+            }
+          }
+        },
         scales: {
           r: {
             suggestedMin: 0,
