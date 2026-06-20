@@ -3,13 +3,15 @@ from __future__ import annotations
 import json
 import os
 import secrets
+import pandas as pd
 
 from random_forest_recommender import get_rf_recommendations
 from knn_recommender import get_knn_recommendations
 
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 
-from analytics import as_chart_labels_and_values, build_listening_insights
+from analytics import (as_chart_labels_and_values, build_listening_insights, extract_audio_features_from_dataset, summarize_audio_features, extract_genres_from_dataset)
+
 from config import config
 from recommendation import mood_label
 from spotify_service import (
@@ -21,6 +23,7 @@ from spotify_service import (
     fetch_recently_played,
     fetch_top_artists,
     fetch_top_tracks,
+    get_track_image,
 )
 
 app = Flask(__name__)
@@ -149,13 +152,41 @@ def dashboard():
 
         raise
 
-    audio_summary = {
-        "danceability": 0.5,
-        "energy": 0.5,
-        "valence": 0.5,
-        "acousticness": 0.5,
-        "tempo": 120
-    }
+    try:
+        dataset_df = pd.read_csv("spotify_dataset.csv")
+
+        audio_features = extract_audio_features_from_dataset(
+            top_tracks,
+            dataset_df
+        )
+
+        print("Matched Tracks:", len(audio_features))
+
+        audio_summary = summarize_audio_features(
+            audio_features
+        )
+
+        print("Audio Summary:", audio_summary)
+
+        genre_counts = extract_genres_from_dataset(
+        top_tracks,
+        dataset_df
+        )
+
+    except Exception as e:
+
+        print("Audio Analysis Error:")
+        print(e)
+
+        audio_summary = {
+            "danceability": 0.0,
+            "energy": 0.0,
+            "valence": 0.0,
+            "acousticness": 0.0,
+            "instrumentalness": 0.0,
+            "speechiness": 0.0,
+            "liveness": 0.0,
+        }
 
     insights = build_listening_insights(
         audio_summary,
@@ -164,19 +195,62 @@ def dashboard():
     )
 
     rf_recommendations = get_rf_recommendations(
-        top_tracks
+        top_tracks,
+        top_artists,
     )
 
+    print(rf_recommendations[:2])
+
+    for song in rf_recommendations:
+
+        song["image_url"] = get_track_image(
+            access_token,
+            song["track_name"],
+            song["artists"],
+        )
+
     knn_recommendations = get_knn_recommendations(
-        top_tracks
+        top_tracks,
+        top_artists,
     )
+
+    for song in knn_recommendations:
+
+        song["image_url"] = get_track_image(
+            access_token,
+            song["track_name"],
+            song["artists"]
+        )
 
     mood = mood_label(audio_summary)
 
     labels, values = as_chart_labels_and_values(audio_summary)
+
+    genre_labels = list(
+        genre_counts.keys()
+    )
+
+    genre_values = list(
+        genre_counts.values()
+    )
+
+    labels, values = as_chart_labels_and_values(audio_summary)
+
+    print("GENRE COUNTS:")
+    print(genre_counts)
+
+    print("GENRE LABELS:")
+    print(list(genre_counts.keys()))
+
+    print("GENRE VALUES:")
+    print(list(genre_counts.values()))
+
     chart_data = {
         "featureLabels": labels,
         "featureValues": values,
+
+        "genreLabels": list(genre_counts.keys()),
+        "genreValues": list(genre_counts.values()),
     }
 
     return render_template(
@@ -191,6 +265,7 @@ def dashboard():
         knn_recommendations=knn_recommendations,
         audio_summary=audio_summary,
         mood=mood,
+        genre_counts=genre_counts,
         chart_data=json.dumps(chart_data),
     )
 

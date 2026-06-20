@@ -1,3 +1,4 @@
+```
 {% extends "base.html" %}
 {% block content %}
 
@@ -24,7 +25,7 @@
     <span class="stat-key">Recently Played</span>
   </div>
   <div class="stat-chip">
-    <span class="stat-val">{{ recommendations | length }}</span>
+    <span class="stat-val">{{ (knn_recommendations | length) + (rf_recommendations | length) }}</span>
     <span class="stat-key">For You</span>
   </div>
   <div class="stat-chip">
@@ -48,10 +49,14 @@
 <div class="tab-panel active" id="tab-overview">
 
   <div class="grid two">
-
-    <article class="card">
+    <article class="card card-full" style="margin-bottom: 20px;">
       <h2>Taste Profile</h2>
       <canvas id="featuresChart" height="210"></canvas>
+    </article>
+
+    <article class="card">
+      <h2>Your Favorite Genres</h2>
+      <canvas id="genreChart"></canvas>
     </article>
 
   </div>
@@ -108,7 +113,10 @@
           <span class="track-artist">{{ track.artists | map(attribute='name') | join(', ') }}</span>
         </div>
         <a class="open-btn" href="{{ track.external_urls.spotify }}" target="_blank">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
+          </svg>
           Open
         </a>
       </div>
@@ -129,7 +137,10 @@
           <span class="track-artist">{{ artist.genres[:2] | join(', ') if artist.genres else 'No genre data' }}</span>
         </div>
         <a class="open-btn" href="{{ artist.external_urls.spotify }}" target="_blank">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
+          </svg>
           Open
         </a>
       </div>
@@ -150,6 +161,13 @@
           <strong>{{ track.name }}</strong>
           <span class="track-artist">{{ track.artists | map(attribute='name') | join(', ') }}</span>
         </div>
+        <a class="open-btn" href="{{ track.external_urls.spotify }}" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
+          </svg>
+          Open
+        </a>
       </div>
       {% endfor %}
     </div>
@@ -157,109 +175,136 @@
 </div>
 
 <div class="tab-panel" id="tab-recs">
-  <article class="card card-full">
-    <h2>Recommended For You</h2>
-    <section class="grid two">
 
-        <article class="card">
-    
-            <h2> Random Forest Recommendations</h2>
-    
-            <div class="recommendations">
-    
-                {% for rec in rf_recommendations %}
-    
-                <div class="rec-card">
-    
-                    <strong>{{ rec.track_name }}</strong>
-    
-                    <p>{{ rec.artists }}</p>
-    
-                    <p>{{ rec.track_genre }}</p>
-    
-                    <p>Popularity: {{ rec.popularity }}</p>
-    
-                </div>
-    
-                {% endfor %}
-    
-            </div>
-    
-        </article>
-    
-    
-        <article class="card">
-    
-            <h2> KNN Recommendations</h2>
-    
-            <div class="recommendations">
-    
-                {% for rec in knn_recommendations %}
-    
-                <div class="rec-card">
-    
-                    <strong>{{ rec.track_name }}</strong>
-    
-                    <p>{{ rec.artists }}</p>
-    
-                    <p>{{ rec.track_genre }}</p>
-    
-                </div>
-    
-                {% endfor %}
-    
-            </div>
-    
-        </article>
-    
-    </section>
-    
-    <section class="card">
-    
-      <h2>Machine Learning Model Comparison</h2>
-    
-      <table class="comparison-table">
-    
-          <tr>
-              <th>Criteria</th>
-              <th>Random Forest</th>
-              <th>KNN</th>
+  <div class="grid two" style="margin-bottom: 30px; gap: 20px;">
+
+    <article class="card card-full">
+      <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+        <span style="color: #1DB954;">◆</span> KNN Recommendations
+      </h2>
+      <div class="rec-grid" style="grid-template-columns: 1fr;">
+        {% if knn_recommendations %}
+        {% for rec in knn_recommendations %}
+        <div class="rec-tile" style="flex-direction: row; gap: 12px;">
+          {% if rec.get('image_url') %}
+          <img src="{{ rec.image_url }}" alt="{{ rec.track_name }}"
+            style="width: 115px; height: 115px; flex-shrink: 0; border-radius: 4px; object-fit: cover;">
+          {% else %}
+          <div class="rec-img rec-img-placeholder"
+            style="width: 115px; height: 115px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1DB954, #1aa34a); color: #000; font-size: 36px; border-radius: 4px; font-weight: bold;">
+            ♪</div>
+          {% endif %}
+          <div class="rec-info" style="gap: 6px;">
+            <strong class="rec-name">{{ rec.track_name }}</strong>
+            <span class="rec-artist">{{ rec.artists }}</span>
+            <span class="rec-album">{{ rec.track_genre }}</span>
+            <a class="open-btn rec-open" href="https://open.spotify.com/search/{{ rec.track_name }}" target="_blank"
+              style="margin-top: auto;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
+              </svg>
+              Listen
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p style="color: #b3b3b3; text-align: center; padding: 20px;">No recommendations available</p>
+        {% endif %}
+      </div>
+    </article>
+
+    <article class="card card-full">
+      <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+        <span style="color: #1DB954;">◆</span> Random Forest Recommendations
+      </h2>
+      <div class="rec-grid" style="grid-template-columns: 1fr;">
+        {% if rf_recommendations %}
+        {% for rec in rf_recommendations %}
+        <div class="rec-tile" style="flex-direction: row; gap: 12px;">
+          {% if rec.get('image_url') %}
+          <img src="{{ rec.image_url }}" alt="{{ rec.track_name }}"
+            style="width: 115px; height: 115px; flex-shrink: 0; border-radius: 4px; object-fit: cover;">
+          {% else %}
+          <div class="rec-img rec-img-placeholder"
+            style="width: 115px; height: 115px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1DB954, #1aa34a); color: #000; font-size: 36px; border-radius: 4px; font-weight: bold;">
+            ♪</div>
+          {% endif %}
+          <div class="rec-info" style="gap: 6px;">
+            <strong class="rec-name">{{ rec.track_name }}</strong>
+            <span class="rec-artist">{{ rec.artists }}</span>
+            <span class="rec-album">{{ rec.track_genre }}</span>
+            <a class="open-btn rec-open" href="https://open.spotify.com/search/{{ rec.track_name }}" target="_blank"
+              style="margin-top: auto;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
+              </svg>
+              Listen
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p style="color: #b3b3b3; text-align: center; padding: 20px;">No recommendations available</p>
+        {% endif %}
+      </div>
+    </article>
+
+  </div>
+
+
+
+
+
+  <article class="card card-full">
+    <h2 style="margin-bottom: 20px;">Model Comparison</h2>
+    <div class="comparison-table">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 2px solid #1DB954;">
+            <th style="padding: 14px; text-align: left; font-weight: 600; color: #1DB954;">Aspect</th>
+            <th style="padding: 14px; text-align: left; font-weight: 600; color: #1DB954;">KNN Model</th>
+            <th style="padding: 14px; text-align: left; font-weight: 600; color: #1DB954;">Random Forest Model</th>
           </tr>
-    
-          <tr>
-              <td>Algorithm Type</td>
-              <td>Supervised Learning</td>
-              <td>Instance-Based Learning</td>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid #282828;">
+            <td style="padding: 14px; font-weight: 500;">Algorithm Type</td>
+            <td style="padding: 14px;">Instance-Based Learning</td>
+            <td style="padding: 14px;">Ensemble Classification</td>
           </tr>
-    
-          <tr>
-              <td>Goal</td>
-              <td>Predict user preference</td>
-              <td>Find similar songs</td>
+          <tr style="border-bottom: 1px solid #282828;">
+            <td style="padding: 14px; font-weight: 500;">Distance Metric</td>
+            <td style="padding: 14px;">Euclidean Distance</td>
+            <td style="padding: 14px;">Feature Importance</td>
           </tr>
-    
-          <tr>
-              <td>Audio Features</td>
-              <td>✓</td>
-              <td>✓</td>
+          <tr style="border-bottom: 1px solid #282828;">
+            <td style="padding: 14px; font-weight: 500;">Training Speed</td>
+            <td style="padding: 14px;">Fast</td>
+            <td style="padding: 14px;">Moderate</td>
           </tr>
-    
-          <tr>
-              <td>Popularity Feature</td>
-              <td>✓</td>
-              <td>✗</td>
+          <tr style="border-bottom: 1px solid #282828;">
+            <td style="padding: 14px; font-weight: 500;">Prediction Speed</td>
+            <td style="padding: 14px;">Slower</td>
+            <td style="padding: 14px;">Fast</td>
           </tr>
-    
-          <tr>
-              <td>Recommendation Type</td>
-              <td>Personalized</td>
-              <td>Similarity Based</td>
+          <tr style="border-bottom: 1px solid #282828;">
+            <td style="padding: 14px; font-weight: 500;">Model Interpretability</td>
+            <td style="padding: 14px;">High</td>
+            <td style="padding: 14px;">Medium</td>
           </tr>
-    
+          <tr>
+            <td style="padding: 14px; font-weight: 500;">Best For</td>
+            <td style="padding: 14px;">Similar Track Discovery</td>
+            <td style="padding: 14px;">Popularity-Based Recommendations</td>
+          </tr>
+        </tbody>
       </table>
-    
-    </section>
+    </div>
   </article>
+
 </div>
 
 <script id="chart-data" type="application/json">
@@ -267,3 +312,4 @@
 </script>
 
 {% endblock %}
+```

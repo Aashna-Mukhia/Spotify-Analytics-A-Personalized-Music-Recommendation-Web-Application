@@ -120,3 +120,53 @@ def fetch_artist(access_token: str, artist_id: str) -> Dict[str, Any]:
 
 def fetch_track(access_token: str, track_id: str) -> Dict[str, Any]:
     return _spotify_get(f"/tracks/{track_id}", access_token)
+
+
+def get_track_image(
+    access_token,
+    track_name,
+    artist_name
+):
+    import requests
+
+    url = "https://api.spotify.com/v1/search"
+
+    headers = {
+        "Authorization": f"Bearer {access_token}"
+    }
+
+    params = {
+        "q": f"track:{track_name} artist:{artist_name}",
+        "type": "track",
+        "limit": 1
+    }
+
+    response = requests.get(
+        url,
+        headers=headers,
+        params=params
+    )
+
+    if response.status_code != 200:
+        return ""
+
+    data = response.json()
+
+    items = (
+        data.get("tracks", {})
+        .get("items", [])
+    )
+
+    if not items:
+        return ""
+
+    images = (
+        items[0]
+        .get("album", {})
+        .get("images", [])
+    )
+
+    if not images:
+        return ""
+
+    return images[0]["url"]

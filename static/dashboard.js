@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  
   // Bar – Genre Breakdown
   const genreCanvas = document.getElementById("genreChart");
   if (genreCanvas) {
@@ -71,8 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
       data: {
         labels: data.genreLabels,
         datasets: [{
-          label: "Count",
+          label: "Genre Preference",
           data: data.genreValues,
+          
           backgroundColor: "rgba(29,185,84,0.18)",
           borderColor: spotifyGreen,
           borderWidth: 1.5,
@@ -85,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
         animation: { duration: 700, easing: "easeOutQuart" },
         plugins: { legend: { display: false } },
         scales: {
-          x: { grid: { color: gridColor }, ticks: { color: labelColor } },
+          x: { grid: { color: gridColor }, ticks: { color: labelColor, maxRotation: 45, minRotation: 45 } },
           y: {
             beginAtZero: true,
             grid: { color: gridColor },

@@ -4,72 +4,239 @@ from collections import Counter
 from statistics import mean
 from typing import Dict, List, Tuple
 
+import pandas as pd
 
-FEATURE_KEYS = ["danceability", "energy", "valence", "acousticness", "instrumentalness", "speechiness", "liveness"]
+
+FEATURE_KEYS = [
+    "danceability",
+    "energy",
+    "valence",
+    "acousticness",
+    "instrumentalness",
+    "speechiness",
+    "liveness",
+]
 
 
 def clamp(value: float, low: float = 0.0, high: float = 1.0) -> float:
     return max(low, min(high, value))
 
 
-def summarize_audio_features(audio_features: List[Dict]) -> Dict[str, float]:
+def extract_audio_features_from_dataset(
+    top_tracks,
+    dataset_df
+):
+    audio_features = []
+
+    if dataset_df.empty:
+        return audio_features
+
+    dataset_df = dataset_df.copy()
+
+    dataset_df["track_name_clean"] = (
+        dataset_df["track_name"]
+        .astype(str)
+        .str.lower()
+        .str.strip()
+    )
+
+    dataset_df["artist_clean"] = (
+        dataset_df["artists"]
+        .astype(str)
+        .str.lower()
+        .str.strip()
+    )
+
+    for track in top_tracks:
+
+        track_name = (
+            track.get("name", "")
+            .lower()
+            .strip()
+        )
+
+        artists = track.get("artists", [])
+
+        artist_name = ""
+
+        if artists:
+            artist_name = (
+                artists[0]
+                .get("name", "")
+                .lower()
+                .strip()
+            )
+
+        match = dataset_df[
+            (dataset_df["track_name_clean"] == track_name)
+            &
+            (dataset_df["artist_clean"].str.contains(artist_name, na=False))
+        ]
+
+        if match.empty:
+            match = dataset_df[
+                dataset_df["track_name_clean"] == track_name
+            ]
+
+        if match.empty:
+            continue
+
+        row = match.iloc[0]
+
+        audio_features.append({
+            feature: float(row.get(feature, 0))
+            for feature in FEATURE_KEYS
+        })
+
+    return audio_features
+
+
+def extract_genres_from_dataset(
+    top_tracks,
+    dataset_df
+):
+    genre_counter = Counter()
+
+    if dataset_df.empty:
+        return {}
+
+    dataset_df = dataset_df.copy()
+
+    dataset_df["track_name_clean"] = (
+        dataset_df["track_name"]
+        .astype(str)
+        .str.lower()
+        .str.strip()
+    )
+
+    for track in top_tracks:
+
+        track_name = (
+            track.get("name", "")
+            .lower()
+            .strip()
+        )
+
+        match = dataset_df[
+            dataset_df["track_name_clean"] == track_name
+        ]
+
+        if match.empty:
+            continue
+
+        genre = match.iloc[0].get("track_genre")
+
+        if pd.notna(genre):
+            genre_counter[str(genre)] += 1
+
+    return dict(
+        genre_counter.most_common(8)
+    )
+
+
+def summarize_audio_features(
+    audio_features: List[Dict]
+) -> Dict[str, float]:
+
     summary = {}
+
     for key in FEATURE_KEYS:
-        values = [float(item.get(key, 0.0)) for item in audio_features if item.get(key) is not None]
+
+        values = [
+            float(item.get(key, 0))
+            for item in audio_features
+            if item.get(key) is not None
+        ]
+
         summary[key] = round(mean(values), 3) if values else 0.0
+
     return summary
 
 
-def build_genre_counts(top_artists: List[Dict]) -> Dict[str, int]:
-    counter = Counter()
-    for artist in top_artists:
-        for genre in artist.get("genres", []):
-            counter[genre] += 1
-    return dict(counter.most_common(8))
+def build_listening_insights(
+    audio_summary: Dict[str, float],
+    top_artists: List[Dict],
+    top_tracks: List[Dict]
+) -> List[str]:
 
-
-def build_listening_insights(audio_summary: Dict[str, float], top_artists: List[Dict], top_tracks: List[Dict]) -> List[str]:
-    insights: List[str] = []
+    insights = []
 
     if not top_tracks:
-        insights.append("No top tracks yet, so the dashboard is waiting for fresh listening data.")
-        return insights
+        return [
+            "No top tracks available yet."
+        ]
 
-    if audio_summary.get("energy", 0) >= 0.65:
-        insights.append("Your taste leans energetic, so high-tempo tracks will probably fit your vibe.")
-    elif audio_summary.get("energy", 0) <= 0.4:
-        insights.append("Your listening history looks calmer and more mellow overall.")
-    else:
-        insights.append("Your music taste sits in the middle, with a balanced energy profile.")
+    energy = audio_summary.get("energy", 0)
+    valence = audio_summary.get("valence", 0)
+    acousticness = audio_summary.get("acousticness", 0)
 
-    if audio_summary.get("valence", 0) >= 0.6:
-        insights.append("You seem to enjoy brighter, happier-sounding songs.")
+    if energy >= 0.65:
+        insights.append(
+            "Your listening profile is highly energetic and upbeat."
+        )
+    elif energy <= 0.40:
+        insights.append(
+            "Your music taste leans toward relaxed and mellow tracks."
+        )
     else:
-        insights.append("You tend toward a more reflective or emotional sound palette.")
+        insights.append(
+            "You enjoy a balanced mix of energetic and laid-back music."
+        )
+
+    if valence >= 0.60:
+        insights.append(
+            "You generally prefer positive and uplifting songs."
+        )
+    else:
+        insights.append(
+            "You tend to enjoy emotional or introspective music."
+        )
+
+    if acousticness >= 0.50:
+        insights.append(
+            "Acoustic and organic sounds appear frequently in your listening habits."
+        )
+    else:
+        insights.append(
+            "You seem to gravitate toward more produced and electronic sounds."
+        )
 
     if top_artists:
-        first_artist = top_artists[0].get("name", "your top artist")
-        insights.append(f"One of your strongest anchors right now is {first_artist}.")
-
-    if len(top_tracks) >= 3:
-        first_three = ", ".join(track.get("name", "") for track in top_tracks[:3] if track.get("name"))
-        insights.append(f"Your top tracks right now include {first_three}.")
+        artist_name = top_artists[0].get("name", "your favorite artist")
+        insights.append(
+            f"Your strongest artist preference right now is {artist_name}."
+        )
 
     return insights[:4]
 
 
-def derive_target_features(audio_summary: Dict[str, float]) -> Dict[str, float]:
+def derive_target_features(
+    audio_summary: Dict[str, float]
+) -> Dict[str, float]:
+
     return {
-        "danceability": clamp(audio_summary.get("danceability", 0.5)),
-        "energy": clamp(audio_summary.get("energy", 0.5)),
-        "valence": clamp(audio_summary.get("valence", 0.5)),
-        "acousticness": clamp(audio_summary.get("acousticness", 0.2)),
-        "speechiness": clamp(audio_summary.get("speechiness", 0.05)),
-        "liveness": clamp(audio_summary.get("liveness", 0.2)),
+        "danceability": clamp(audio_summary.get("danceability", 0)),
+        "energy": clamp(audio_summary.get("energy", 0)),
+        "valence": clamp(audio_summary.get("valence", 0)),
+        "acousticness": clamp(audio_summary.get("acousticness", 0)),
+        "instrumentalness": clamp(audio_summary.get("instrumentalness", 0)),
+        "speechiness": clamp(audio_summary.get("speechiness", 0)),
+        "liveness": clamp(audio_summary.get("liveness", 0)),
     }
 
 
-def as_chart_labels_and_values(feature_summary: Dict[str, float]) -> Tuple[List[str], List[float]]:
-    labels = [k.replace("_", " ").title() for k in FEATURE_KEYS]
-    values = [round(float(feature_summary.get(k, 0.0)), 3) for k in FEATURE_KEYS]
+def as_chart_labels_and_values(
+    feature_summary: Dict[str, float]
+) -> Tuple[List[str], List[float]]:
+
+    labels = [
+        key.replace("_", " ").title()
+        for key in FEATURE_KEYS
+    ]
+
+    values = [
+        round(float(feature_summary.get(key, 0)), 3)
+        for key in FEATURE_KEYS
+    ]
+
     return labels, values
